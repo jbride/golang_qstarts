@@ -1,3 +1,5 @@
-$ go mod init ratwater.xyz/lnd_client
-$ go mod tidy
-$ go get github.com/lightninglabs/lndclient@v0.17.0-4
+= lnd_client_quickstart
+
+-----
+$ go run lnd_client_quickstart.go
+-----

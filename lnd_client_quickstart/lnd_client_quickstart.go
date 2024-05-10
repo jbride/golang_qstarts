@@ -106,7 +106,7 @@ func setUpLNDClients() error {
 
 func subscribeToEvents() error {
 
-	ceUpdate, channelErr, err := grpcServices.Client.SubscribeChannelEvents(bCtx)
+	_, channelErr, err := grpcServices.Client.SubscribeChannelEvents(bCtx)
 
 	if err != nil {
 		return fmt.Errorf("ERROR: subscribeChannelEvents %v", err)
