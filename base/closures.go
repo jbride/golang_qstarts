@@ -7,7 +7,7 @@ import "fmt"
  *   https://gobyexample.com/closures
  */
 
-// anonymous function returned by function "intSeq"
+// anonymous function returned as part of function "intSeq"
 func intSeq() func() int {
 
 	i := 0 // shorthand for declaring and initializing a variable.  This syntax is only available inside functions
