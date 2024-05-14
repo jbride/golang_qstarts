@@ -9,7 +9,9 @@ import "fmt"
 
 // anonymous function returned by function "intSeq"
 func intSeq() func() int {
-	i := 0
+
+	i := 0 // shorthand for declaring and initializing a variable.  This syntax is only available inside functions
+
 	return func() int {
 		i++
 		return i
