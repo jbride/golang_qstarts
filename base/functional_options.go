@@ -3,10 +3,14 @@ package main
 import "fmt"
 
 /*
-Define a function type that accepts a pointer to a House.
+ *   reference:
+ *     https://www.sohamkamani.com/golang/options-pattern
+ */
 
-	This is the signature of our option functions
-*/
+/*
+ * Define a function type that accepts a pointer to a House.
+ * This is the signature of our option functions
+ */
 type HouseOption func(*House)
 
 type House struct {
@@ -35,7 +39,18 @@ func WithFloors(floors int) HouseOption {
 	}
 }
 
+// This signature type allows for invoking function directly on object instance
+func (houseP *House) setHouseMaterialToSteel() {
+	houseP.Material = "steel"
+}
+
+func setHouseMaterialToClay(houseP *House) {
+	houseP.Material = "Clay"
+}
+
 // NewHouse is a constructor function for `*House`
+// This constructor is a variadic function that accepts a list of any number of function option arguments.
+// It then applies to the *House instance before returning it
 func NewHouse(opts ...HouseOption) *House {
 	const (
 		defaultFloors       = 2
@@ -50,6 +65,7 @@ func NewHouse(opts ...HouseOption) *House {
 	}
 
 	// Loop through each option
+
 	for _, opt := range opts {
 		// call the option giving the instantiated *House as the argument
 		opt(h)
@@ -64,6 +80,8 @@ func main() {
 		WithoutFireplace(),
 		WithFloors(3),
 	)
+	//h.setHouseMaterialToSteel()
+	setHouseMaterialToClay(h)
 	fmt.Printf("house details:   %+v\n", h)
 
 }
