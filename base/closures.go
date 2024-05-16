@@ -21,7 +21,7 @@ func intSeq() func() int {
 func main() {
 	nextInt := intSeq() // create a copy of anonymous function; scope of variables is specific to that anon function
 	for x := 0; x < 5; x++ {
-		fmt.Println((nextInt()))
+		fmt.Println(nextInt())
 	}
 
 	newInts := intSeq() // create a new copy of anonymous function; scope of variables is specific to that anon function

@@ -27,12 +27,13 @@ var (
 	grpcServices  *lndclient.GrpcLndServices
 	bCtx          context.Context
 
-	host    string = "localhost"
-	network string = "regtest"
-	macFile string = "admin.macaroon"
-	tlsPath string = ""
-	macPath string
-	macData []byte
+	host        string = "localhost"
+	network     string = "regtest"
+	macFile     string = "admin.macaroon"
+	tlsCertPath string = ""
+	lndDataDir  string
+	macPath     string
+	macData     []byte
 )
 
 func setUpLNDClients() error {
@@ -55,7 +56,7 @@ func setUpLNDClients() error {
 		// subservers have the same requirements.
 		var err error
 		basicClient, err = lndclient.NewBasicClient(
-			host, tlsPath, filepath.Dir(macPath), string(network),
+			host, tlsCertPath, filepath.Dir(macPath), string(network),
 			clientOptions...,
 		)
 		return err
@@ -87,14 +88,17 @@ func setUpLNDClients() error {
 
 	grpcServices, err = lndclient.NewLndServices(
 		&lndclient.LndServicesConfig{
-			LndAddress:         host,
-			Network:            lndclient.Network(network),
-			CustomMacaroonPath: macPath,
-			RPCTimeout:         defaultConnectTimeout,
-			TLSPath:            tlsPath,
+			LndAddress:            host,
+			Network:               lndclient.Network(network),
+			TLSPath:               tlsCertPath,
+			CustomMacaroonPath:    macPath,
+			RPCTimeout:            defaultConnectTimeout,
+			BlockUntilChainSynced: true,
+			BlockUntilUnlocked:    true,
+			CallerCtx:             bCtx,
 			CheckVersion: &verrpc.Version{
 				AppMajor: 0,
-				AppMinor: 13,
+				AppMinor: 17,
 			},
 		})
 	if err != nil {
@@ -118,21 +122,43 @@ func subscribeToEvents() error {
 	return err
 }
 
+func grpcServiceTest() {
+
+	if grpcServices.State != nil {
+		wState, wErr := grpcServices.State.GetState(bCtx)
+		if wErr != nil {
+			fmt.Errorf("getState error: %v", wErr)
+		}
+		fmt.Printf("grpcService state: %s\n", wState)
+	} else {
+		fmt.Printf("grpcServiceTest() State = nil\n")
+	}
+}
+
 func main() {
 	fmt.Printf("main() Starting lnd_client_quickstart\n")
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return
 	}
+	lndDataDir = homeDir + "/.lnd"
+	macPath = lndDataDir + "/data/chain/bitcoin/" + network + "/" + macFile
+	tlsCertPath = lndDataDir + "/tls.cert"
+
 	bCtx = context.Background()
-	macPath = homeDir + "/.lnd/data/chain/bitcoin/" + network + "/" + macFile
 	err = setUpLNDClients()
 	if err != nil {
 		fmt.Printf("%s\n", err)
+		return
 	}
+
+	grpcServiceTest()
 	err = subscribeToEvents()
 	if err != nil {
 		fmt.Printf("%s\n", err)
+		err.Error()
+		return
 	}
 }
