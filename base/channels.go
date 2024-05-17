@@ -46,6 +46,6 @@ func main() {
 	cBuffer := make(chan string, 2)
 	go feedChannelBuffer(cBuffer)
 	time.Sleep(3 * time.Second)
-	fmt.Printf("cBuffers = %s , %s\n", <-cBuffer, <-cBuffer)
+	fmt.Printf("\n\ncBuffers = %s , %s\n", <-cBuffer, <-cBuffer)
 	//fmt.Printf("cBuffers = %s , %s . %s\n", <-cBuffer, <-cBuffer, <-cBuffer) //fatal runtime error: all goroutines are asleep - deadlock!
 }
