@@ -14,6 +14,9 @@ import (
  *	 They will only accept sends (chan <-) if there is a corresponding receive (<- chan) ready to receive the sent value.
  * Buffered channels accept a limited number of values without a corresponding receiver for those values.
  */
+
+const messageCount = 5
+
 func feedChannelBuffer(cBuffer chan string) {
 	cBuffer <- "buffered"
 	cBuffer <- "channel"
@@ -24,16 +27,25 @@ func main() {
 	// Create a new channel w/ make(chan val-type).
 	messages := make(chan string)
 	go func() {
-		messages <- "ping" // Send a value into a channel using the channel <- syntax
+		for i := 0; i < messageCount; i++ {
+			message := fmt.Sprint("ping", i)
+			messages <- message // Send a value into a channel; this will block until receiver is ready
+			fmt.Printf("anonFunc() just sent message to channel:  %s\n", message)
+		}
 	}()
 
 	// The <-channel syntax receives a value from the channel
 	// NOTE: by default sends & receives block until both the sender and receiver are ready
-	// Subsequently, our program can block for the "ping" message w/out having to use any other synchronization
-	fmt.Printf("main() channel message from different thread = %s\n", <-messages)
+	// Subsequently, this program can block for the "ping" message w/out having to use any other synchronization
+	for i := 0; i < messageCount; i++ {
+		fmt.Printf("main() channel message from different thread = %s\n", <-messages)
+		time.Sleep(1 * time.Second)
+	}
 
+	// Channel Buffers
 	cBuffer := make(chan string, 2)
 	go feedChannelBuffer(cBuffer)
-	time.Sleep(5 * time.Second)
+	time.Sleep(3 * time.Second)
 	fmt.Printf("cBuffers = %s , %s\n", <-cBuffer, <-cBuffer)
+	//fmt.Printf("cBuffers = %s , %s . %s\n", <-cBuffer, <-cBuffer, <-cBuffer) //fatal runtime error: all goroutines are asleep - deadlock!
 }
