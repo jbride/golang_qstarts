@@ -10,6 +10,7 @@ import (
  *    1) go run contexts.go
  *    2) curl localhost:20090/hello
  *       - wait 10 seconds for a response from server
+ *               or
  *       - <crtl-c> : observe behavior of ctx.Done event
  *
  */
