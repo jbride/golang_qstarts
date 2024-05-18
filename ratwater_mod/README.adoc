@@ -8,9 +8,9 @@ The following was already executed:
 
 
 -----
-$ ( cd ratwater; go mod init ratwater.xyz/ratwater )
+$ ( cd ratwater_mod; go mod init ratwater.xyz/ratwater )
 $ ( cd base; go mod init ratwater.xyz/base )
-$ ( cd base; go mod edit -replace ratwater.xyz/ratwater=../ratwater )
+$ ( cd base; go mod edit -replace ratwater.xyz/ratwater=../ratwater_mod )
 $ ( cd base; go mod tidy )
 $ ( cd base; go run modules.go )
 -----
