@@ -25,7 +25,7 @@ func main() {
 				ops.Add(1)
 			}
 
-			wg.Done()
+			defer wg.Done()
 			fmt.Printf("anonFunc() just finished thread:\t %d \t: sleep duration = %d\n", threadNum, sleepTime)
 		}(i)
 	}
