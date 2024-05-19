@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"ratwater.xyz/ratwater"
+	"ratwater.xyz/mod/ratwater"
 )
 
 func main() {
