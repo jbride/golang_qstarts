@@ -12,12 +12,16 @@ import (
 	"ratwater.xyz/mod/ratwater"
 )
 
-type server struct {
+// So as to implement Ratwater_GRPCServer interface (as per ratwater_grpc.pb.go),
+// this class must embed the following in a struct:  pb.UnimplementedRatwater_GRPCServer (which is itself a struct)
+type rGrpcServer struct {
 	pb.UnimplementedRatwater_GRPCServer
 }
 
-// Add a minimum, just implement the rpc functions defined in the proto file
-func (s *server) Hello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloResponse, error) {
+// For Ratwater_GRPCServer interface to be implemented, the following function is required.
+// Otherwise, UnimplementedRatwater_GRPCServer (found in ratwater_grpc.pb.go) will be invoked
+/* */
+func (s *rGrpcServer) Hello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloResponse, error) {
 	modResponse := ratwater.Hello(in.String())
 	fmt.Printf("UnaryHello() inbound param = %s;\tresponse = %s\n", in.String(), modResponse)
 	return &pb.HelloResponse{SResponse: modResponse}, nil
@@ -35,7 +39,7 @@ func main() {
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 
-	pb.RegisterRatwater_GRPCServer(grpcServer, &server{})
+	pb.RegisterRatwater_GRPCServer(grpcServer, &rGrpcServer{})
 	fmt.Printf("About to start grpc server on: %s\n", socket)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v\n", err)
