@@ -1,0 +1,38 @@
+= ratwater gRPC
+
+== Reference
+
+. link:https://grpc.io/docs/languages/go/basics/[grpc basics]
+. link:https://github.com/grpc/grpc-go[grpc-go examples]
+
+== Procedure
+
+. server:
++
+-----
+$ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+$ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+
+$ ( cd grpc/helloworld; \
+   protoc \
+    --go_out=proto \
+    --go_opt=paths=source_relative \
+    --go-grpc_out=proto \
+    --go-grpc_opt=paths=source_relative \
+    proto/ratwater.proto )
+
+$ ( cd grpc/helloworld/server; go mod init ratwater.xyz/grpc/helloworld/server )
+$ ( cd grpc/helloworld/server; go mod edit -replace ratwater.xyz/grpc/helloworld/proto=../proto )
+$ ( cd grpc/helloworld/server; go mod tidy )
+$ ( cd grpc/helloworld/server; go run ratwater_server.go )
+-----
+
+. client:
++
+-----
+$ ( cd grpc/helloworld/client; go mod init ratwater.xyz/grpc/helloworld/client )
+$ ( cd grpc/helloworld/client; go mod edit -replace ratwater.xyz/grpc/helloworld/proto=../proto )
+$ ( cd grpc/helloworld/client; go mod tidy )
+$ ( cd grpc/helloworld/client; go run grpc_client.go --greetingName=jessica )
+-----
+
