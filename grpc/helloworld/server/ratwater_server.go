@@ -18,7 +18,7 @@ type rGrpcServer struct {
 	pb.UnimplementedRatwater_GRPCServer
 }
 
-// For Ratwater_GRPCServer interface to be implemented, the following function is required.
+// For Ratwater_GRPCServer interface to be implemented, the following function is required (implemented as a 'pointer receiver' to a struct)
 // Otherwise, UnimplementedRatwater_GRPCServer (found in ratwater_grpc.pb.go) will be invoked
 /* */
 func (s *rGrpcServer) Hello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloResponse, error) {
